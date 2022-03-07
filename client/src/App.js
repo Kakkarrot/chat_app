@@ -1,20 +1,28 @@
 import React from "react";
-import logo from './logo.svg';
 import './App.css';
+import io from 'socket.io-client';
+
+const socket = io.connect("http://localhost:3001")
 
 function App() {
-  const [data, setData] = React.useState(null);
+  const [nickName, setNickName] = React.useState("");
 
   React.useEffect(() => {
-    fetch("/api")
-        .then((res) => res.json())
-        .then((data) => setData(data.message));
+
   }, []);
+
+  function joinChat() {
+      socket.emit("join", nickName)
+  }
 
   return (
     <div className="App">
       <header className="App-header">
-        <p>{!data ? "Loading..." : data}</p>
+          <h3>Chat Chat - For Chatty People</h3>
+          <p>{nickName}</p>
+          <input type="text" placeholder="Enter a nickname!"
+                 onChange={(event) => setNickName(event.target.value)}/>
+          <button onClick={() => joinChat()}>Start Chatting!</button>
       </header>
     </div>
   );

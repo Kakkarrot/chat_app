@@ -29,8 +29,14 @@ io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
 
     socket.on("join", (data) => {
-        console.log("User", data,"has joined")
-        socket.join(ROOM);
+        console.log("User", data,"has joined");
+        // socket.join(ROOM);
+    })
+
+    socket.on("messageChat", (data) => {
+        console.log("User", data.nickName, "sent:", data.message);
+        socket.broadcast.emit("updateChat", data)
+        socket.emit("updateChat", data)
     })
 
     socket.on("disconnect", () => {

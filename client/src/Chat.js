@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 
 function Chat({socket, nickName}) {
     const [message, setMessage] = React.useState("")
@@ -9,7 +9,6 @@ function Chat({socket, nickName}) {
             const messageJson = {
                 "nickName": nickName,
                 "message": message,
-                "socket": socket.id
             }
             socket.emit("messageChat", messageJson);
         }
@@ -18,9 +17,7 @@ function Chat({socket, nickName}) {
     useEffect(() => {
         socket.on("updateChat", (data) => {
             console.log(data)
-            setChatMessages((chatMessages) =>
-                [...chatMessages, data]
-            )
+            setChatMessages(data)
         })
     }, [socket])
 

@@ -25,22 +25,41 @@ const io = new Server(server, {
 
 const ROOM = "42069"
 
+let chatMessages = [];
+let connections = {};
+let users = new Set();
+
 io.on("connection", (socket) => {
-    console.log(`User Connected: ${socket.id}`);
+    console.log("User Connected:", socket.id);
+    connections[socket.id] = "";
 
     socket.on("join", (data) => {
         console.log("User", data,"has joined");
-        // socket.join(ROOM);
+        if (users.has(data)) {
+            socket.emit("uniqueNickName", false)
+        } else {
+            socket.emit("uniqueNickName", true)
+            connections[socket.id] = data;
+            users.add(data)
+            socket.emit("updateChat", chatMessages)
+        }
     })
 
     socket.on("messageChat", (data) => {
         console.log("User", data.nickName, "sent:", data.message);
-        socket.broadcast.emit("updateChat", data)
-        socket.emit("updateChat", data)
+        chatMessages.push(data)
+        if (chatMessages.length > 10) {
+            chatMessages.shift()
+        }
+        socket.broadcast.emit("updateChat", chatMessages)
+        socket.emit("updateChat", chatMessages)
     })
 
     socket.on("disconnect", () => {
         console.log("User Disconnected", socket.id);
+        let nickName = connections[socket.id]
+        delete connections[socket.id];
+        users.delete(nickName)
     });
 });
 

@@ -19,11 +19,8 @@ const io = new Server(server, {
     cors: {
         //From end URL that will be using the server
         origin: "http://localhost:3000",
-        methods: ["GET", "POST"],
     },
 });
-
-const ROOM = "42069"
 
 let chatMessages = [];
 let connections = {};

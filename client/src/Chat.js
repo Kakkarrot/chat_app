@@ -9,6 +9,7 @@ function Chat({socket, nickName}) {
             const messageJson = {
                 "nickName": nickName,
                 "message": message,
+                "socket": socket.id,
             }
             socket.emit("messageChat", messageJson);
         }
@@ -29,7 +30,10 @@ function Chat({socket, nickName}) {
             <div>
                 {
                     chatMessages.map((message) => {
-                        return <p>{message.message}</p>
+                        return <>
+                            <p>{message.message}</p>
+                            <p>{message.time}</p>
+                        </>
                     })
                 }
             </div>

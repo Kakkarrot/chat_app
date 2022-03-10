@@ -29,14 +29,16 @@ function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <h3>Chat Chat - For Chatty People</h3>
                 {!inChatRoom ?
                     (
-                        <div>
-                            < input type="text" placeholder="Enter a nickname!"
+                        <div className="joinChatContainer">
+                            <h3>Chat Chat</h3>
+                            <h4>For Chatty People</h4>
+                            < input type="text" placeholder="Enter a nickname"
                                     onChange={(event) => setNickName(event.target.value)}/>
+                            <p>Or Just Enter!</p>
                             <button onClick={() => joinChat()}>Start Chatting!</button>
-                            {duplicateNickName ? <p>Username already Exists!</p> : <></>}
+                            {duplicateNickName ? <p className="duplicateNickName">Username already Exists!</p> : <></>}
                         </div>
                     )
                     :

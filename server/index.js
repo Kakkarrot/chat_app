@@ -25,12 +25,21 @@ const io = new Server(server, {
 let chatMessages = [];
 let connections = {};
 let users = new Set();
+let serverTime = new Date();
+let guestCounter = 1;
+
+function changeNickName(data) {
+
+}
 
 io.on("connection", (socket) => {
     console.log("User Connected:", socket.id);
     connections[socket.id] = "";
 
     socket.on("join", (data) => {
+        if (data === "") {
+            data = "Guest_" + guestCounter++;
+        }
         console.log("User", data,"has joined");
         if (users.has(data)) {
             socket.emit("uniqueNickName", false)
@@ -43,7 +52,8 @@ io.on("connection", (socket) => {
     })
 
     socket.on("messageChat", (data) => {
-        console.log("User", data.nickName, "sent:", data.message);
+        console.log("User", data.nickName, "sent:", data);
+        data["time"] = serverTime.toLocaleTimeString()
         chatMessages.push(data)
         if (chatMessages.length > 10) {
             chatMessages.shift()

@@ -1,4 +1,6 @@
 import React, {useEffect} from "react";
+import 'bootstrap/dist/css/bootstrap.css';
+import {Row, Col} from "react-bootstrap";
 
 function Chat({socket, nickName, color}) {
     const [message, setMessage] = React.useState("")
@@ -28,21 +30,28 @@ function Chat({socket, nickName, color}) {
             <div>
                 <h3>Chat Chat</h3>
             </div>
-            <div>
-                {
-                    chatMessages.map((message) => {
-                        return <>
-                            <p>{message.message}</p>
-                            <p>{message.time}</p>
-                        </>
-                    })
-                }
-            </div>
-            <div>
-                <input type="text" placeholder="Start by saying hello!"
-                       onChange={(event) => setMessage(event.target.value)}/>
-                <button onClick={() => sendMessage()}>Send</button>
-            </div>
+            <Row>
+                <Col>
+                    <div>
+                        {
+                            chatMessages.map((message) => {
+                                return <>
+                                    <p>{message.message}</p>
+                                    <p>{message.time}</p>
+                                </>
+                            })
+                        }
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Start by saying hello!"
+                               onChange={(event) => setMessage(event.target.value)}/>
+                        <button onClick={() => sendMessage()}>Send</button>
+                    </div>
+                </Col>
+                <Col>
+                    test
+                </Col>
+            </Row>
         </>
     )
 }

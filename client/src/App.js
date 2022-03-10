@@ -3,7 +3,7 @@ import './App.css';
 import io from 'socket.io-client';
 import Chat from "./Chat";
 import {HexColorPicker} from "react-colorful";
-// import "react-colorful/dist/index.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const socket = io.connect("http://localhost:3001")
 

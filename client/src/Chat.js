@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 
-function Chat({socket, nickName}) {
+function Chat({socket, nickName, color}) {
     const [message, setMessage] = React.useState("")
     const [chatMessages, setChatMessages] = React.useState([])
 
@@ -10,6 +10,7 @@ function Chat({socket, nickName}) {
                 "nickName": nickName,
                 "message": message,
                 "socket": socket.id,
+                "color": color,
             }
             socket.emit("messageChat", messageJson);
         }

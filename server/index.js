@@ -25,7 +25,6 @@ const io = new Server(server, {
 let chatMessages = [];
 let connections = {};
 let users = new Set();
-let serverTime = new Date();
 let guestCounter = 1;
 
 function changeNickName(data) {
@@ -37,23 +36,23 @@ io.on("connection", (socket) => {
     connections[socket.id] = "";
 
     socket.on("join", (data) => {
-        if (data === "") {
-            data = "Guest_" + guestCounter++;
+        if (data.nickName === "") {
+            data.nickName = "Guest_" + guestCounter++;
         }
-        console.log("User", data,"has joined");
-        if (users.has(data)) {
+        console.log("User", data.nickName,"has joined");
+        if (users.has(data.nickName)) {
             socket.emit("uniqueNickName", false)
         } else {
             socket.emit("uniqueNickName", true)
-            connections[socket.id] = data;
-            users.add(data)
+            connections[socket.id] = data.nickName;
+            users.add(data.nickName)
             socket.emit("updateChat", chatMessages)
         }
     })
 
     socket.on("messageChat", (data) => {
         console.log("User", data.nickName, "sent:", data);
-        data["time"] = serverTime.toLocaleTimeString()
+        data["time"] = new Date().toLocaleTimeString()
         chatMessages.push(data)
         if (chatMessages.length > 10) {
             chatMessages.shift()

@@ -26,13 +26,13 @@ function Chat({socket, nickName, color}) {
     }, [socket])
 
     return (
-        <>
-            <div>
+        <div className="chatWindow">
+            <div className="chatHeader">
                 <h3>Chat Chat</h3>
             </div>
             <Row>
                 <Col>
-                    <div>
+                    <div className="chatBody">
                         {
                             chatMessages.map((message) => {
                                 return <>
@@ -52,7 +52,7 @@ function Chat({socket, nickName, color}) {
                     test
                 </Col>
             </Row>
-        </>
+        </div>
     )
 }
 

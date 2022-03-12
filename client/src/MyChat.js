@@ -92,13 +92,7 @@ function MyChat({socket, nickName, color}) {
                         </>
                     )
                 }
-
-
             </div>
-
-
-            {/*<button onClick={() => setShowUserList(!showUserList)}>{showUserList ? "Show Chat" : "Show Users"}</button>*/}
-
         </>
     )
 }

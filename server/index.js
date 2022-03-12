@@ -35,8 +35,9 @@ io.on("connection", (socket) => {
             users.delete(data.nickName)
             data.nickName = data.message.substring(6)
             socket.emit("changeNickname", {validNickname: true, data})
-            connections[socket.id] = data.nickName;
+            connections[socket.id] = {nickName: data.nickName, color: data.color};
             users.add(data.nickName)
+            socket.emit("updateUsers", users)
         }
     }
 
@@ -50,26 +51,21 @@ io.on("connection", (socket) => {
         }
     }
 
-    console.log("User Connected:", socket.id);
-    connections[socket.id] = "";
-
     socket.on("join", (data) => {
         if (data.nickName === "") {
             data.nickName = "Guest_" + guestCounter++;
         }
-        console.log("User", data.nickName,"has joined");
         if (users.has(data.nickName)) {
             socket.emit("uniqueNickname", {showChat: false})
         } else {
             socket.emit("uniqueNickname", {showChat: true, data})
-            connections[socket.id] = data.nickName;
+            connections[socket.id] = {nickName: data.nickName, color: data.color};
             users.add(data.nickName)
             socket.emit("updateChat", chatMessages)
         }
     })
 
     socket.on("messageChat", (data) => {
-        console.log("User", data.nickName, "sent:", data);
         if (data.message.toLowerCase().startsWith("/nick ")){
             changeNickname(data)
             return;
@@ -78,6 +74,7 @@ io.on("connection", (socket) => {
             changeColor(data)
             return;
         }
+        data["time"] = new Date().toLocaleTimeString()
         data["time"] = new Date().toLocaleTimeString()
         chatMessages.push(data)
         if (chatMessages.length > 10) {
@@ -88,8 +85,10 @@ io.on("connection", (socket) => {
     })
 
     socket.on("disconnect", () => {
-        console.log("User Disconnected", socket.id);
-        let nickName = connections[socket.id]
+        if (!connections[socket.id]){
+            return
+        }
+        let nickName = connections[socket.id].nickName
         delete connections[socket.id];
         users.delete(nickName)
     });

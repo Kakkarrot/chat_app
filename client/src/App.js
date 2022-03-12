@@ -77,8 +77,8 @@ function App() {
                         <MyChat socket={socket} nickName={nickName} color={color}/>
                     )
                 }
-                {duplicateNickName ? <p className="duplicateNickName">Nickname already Exists!</p> : <></>}
-                {invalidColor ? <p className="invalidColor">Color not Valid! Try #RRGGBB format!</p> : <></>}
+                {duplicateNickName ? <p className="duplicateNickName">Nickname already exists!</p> : <></>}
+                {invalidColor ? <p className="invalidColor">Color not valid! Try #RRGGBB format!</p> : <></>}
             </header>
         </div>
     );

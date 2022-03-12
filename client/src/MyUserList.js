@@ -12,12 +12,12 @@ import Paper from '@mui/material/Paper'
 function MyUserList({socket}) {
     const [users, setUsers] = React.useState([])
 
-    // useEffect(() => {
-    //     socket.on("updateUsers", (data) => {
-    //         console.log(data)
-    //         setUsers(data)
-    //     })
-    // }, [socket])
+    useEffect(() => {
+        socket.on("updateUsers", (data) => {
+            console.log(data)
+            setUsers(data)
+        })
+    }, [socket])
 
     return (
         <>
@@ -25,8 +25,20 @@ function MyUserList({socket}) {
                 <p>Current Users</p>
             </div>
             <TableVirtuoso
-                style={{ height: 400 }}
-                data={[{name: "test", description: "test"},{name: "test2", description: "test2"}]}
+                style={{ height: 500 }}
+                data={[{name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test", description: "test"},
+                    {name: "test2", description: "test2"}]}
                 components={{
                     Scroller: React.forwardRef((props, ref) => <TableContainer component={Paper} {...props} ref={ref} />),
                     Table: (props) => <Table {...props} style={{ borderCollapse: 'separate' }} />,

@@ -35,14 +35,14 @@ function MyChat({socket, nickName, color}) {
     return (
         <>
 
-            <div className="chat-window">
+            <div className="chatWindow">
                 <button className="toggleView"
                     onClick={() => setShowUserList(!showUserList)}>{showUserList ? "Show Chat" : "Show Users"}</button>
                 {showUserList
                     ?
                     (
                         <>
-                            <MyUserList/>
+                            <MyUserList socket={socket}/>
                         </>
                     )
                     :

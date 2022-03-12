@@ -19,10 +19,14 @@
   "homepage": "https://github.com/Kakkarrot/chat_app#readme",
   "dependencies": {
     "@chatscope/chat-ui-kit-react": "^1.8.3",
+    "@emotion/react": "^11.8.2",
+    "@emotion/styled": "^11.8.1",
+    "@mui/material": "^5.5.0",
     "@progress/kendo-theme-default": "^5.2.0",
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "react-scroll-to-bottom": "^4.2.0",
+    "react-virtuoso": "^2.8.1",
     "socket.io": "^4.4.1"
   }
 }

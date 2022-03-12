@@ -12,19 +12,43 @@ function App() {
     const [color, setColor] = React.useState("#4a00ff");
     const [inChatRoom, setInChatRoom] = React.useState(false)
     const [duplicateNickName, setDuplicateNickName] = React.useState(false)
+    const [invalidColor, setInvalidColor] = React.useState(false)
 
     async function joinChat() {
         socket.emit("join", {nickName, color})
     }
 
     useEffect(() => {
-        socket.on("uniqueNickName", (data) => {
+        socket.on("uniqueNickname", (data) => {
             if (data.showChat) {
                 setDuplicateNickName(false)
                 setInChatRoom(true)
                 setNickName(data.data.nickName)
             } else {
                 setDuplicateNickName(true)
+            }
+        });
+        socket.on("changeNickname", (data) => {
+            if (data.validNickname) {
+                setDuplicateNickName(false)
+                setNickName(data.data.nickName)
+            } else {
+                setDuplicateNickName(true)
+            }
+        })
+        socket.on("changeColor", (data) => {
+            console.log(data)
+            if(data.validColor) {
+                setInvalidColor(false)
+                setColor(data.data.color)
+            } else {
+                setInvalidColor(true)
+            }
+        })
+        socket.on("updateChat", (data) => {
+            if (data[data.length - 1].socket === socket.id){
+                setDuplicateNickName(false)
+                setInvalidColor(false)
             }
         })
     }, [socket])
@@ -46,7 +70,6 @@ function App() {
                             }}/>
                             <p>Or Just Enter!</p>
                             <button onClick={() => joinChat()}>Start Chatting!</button>
-                            {duplicateNickName ? <p className="duplicateNickName">Nickname already Exists!</p> : <></>}
                         </div>
                     )
                     :
@@ -54,6 +77,8 @@ function App() {
                         <MyChat socket={socket} nickName={nickName} color={color}/>
                     )
                 }
+                {duplicateNickName ? <p className="duplicateNickName">Nickname already Exists!</p> : <></>}
+                {invalidColor ? <p className="invalidColor">Color not Valid! Try #RRGGBB format!</p> : <></>}
             </header>
         </div>
     );

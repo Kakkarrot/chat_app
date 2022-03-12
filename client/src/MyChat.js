@@ -10,6 +10,7 @@ function MyChat({socket, nickName, color}) {
     const [showUserList, setShowUserList] = React.useState(false)
 
     async function sendMessage() {
+        setMessage("")
         if (message.length !== 0) {
             const messageJson = {
                 "nickName": nickName,
@@ -23,7 +24,6 @@ function MyChat({socket, nickName, color}) {
 
     useEffect(() => {
         socket.on("updateChat", (data) => {
-            console.log(data)
             setChatMessages(data)
         })
     }, [socket])

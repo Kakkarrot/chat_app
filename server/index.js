@@ -28,14 +28,25 @@ let users = new Set();
 let guestCounter = 1;
 
 io.on("connection", (socket) => {
-    function changeNickName(data) {
+    function changeNickname(data) {
         if(users.has(data.message.substring(6))) {
-            socket.emit("uniqueNickName", {showChat: false})
+            socket.emit("changeNickname", {validNickname: false})
         } else {
+            users.delete(data.nickName)
             data.nickName = data.message.substring(6)
-            socket.emit("uniqueNickName", {showChat: true, data})
+            socket.emit("changeNickname", {validNickname: true, data})
             connections[socket.id] = data.nickName;
             users.add(data.nickName)
+        }
+    }
+
+    function changeColor(data) {
+        let validColor = /^#[0-9A-F]{6}$/i;
+        if (validColor.test(data.message.substring(11))) {
+            data.color = data.message.substring(11)
+            socket.emit("changeColor", {validColor: true, data})
+        } else {
+            socket.emit("changeColor", {validColor: false})
         }
     }
 
@@ -48,9 +59,9 @@ io.on("connection", (socket) => {
         }
         console.log("User", data.nickName,"has joined");
         if (users.has(data.nickName)) {
-            socket.emit("uniqueNickName", {showChat: false})
+            socket.emit("uniqueNickname", {showChat: false})
         } else {
-            socket.emit("uniqueNickName", {showChat: true, data})
+            socket.emit("uniqueNickname", {showChat: true, data})
             connections[socket.id] = data.nickName;
             users.add(data.nickName)
             socket.emit("updateChat", chatMessages)
@@ -59,8 +70,12 @@ io.on("connection", (socket) => {
 
     socket.on("messageChat", (data) => {
         console.log("User", data.nickName, "sent:", data);
-        if (data.message.startsWith("/nick ")){
-            changeNickName(data)
+        if (data.message.toLowerCase().startsWith("/nick ")){
+            changeNickname(data)
+            return;
+        }
+        if (data.message.toLowerCase().startsWith("/nickcolor ")) {
+            changeColor(data)
             return;
         }
         data["time"] = new Date().toLocaleTimeString()

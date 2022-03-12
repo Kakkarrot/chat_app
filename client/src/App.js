@@ -1,7 +1,7 @@
 import React from "react";
 import './App.css';
 import io from 'socket.io-client';
-import Chat from "./Chat";
+import MyChat from "./MyChat";
 import {HexColorPicker} from "react-colorful";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -16,9 +16,10 @@ function App() {
     async function joinChat() {
         socket.emit("join", {nickName, color})
         await socket.on("uniqueNickName", (data) => {
-            if (data) {
+            if (data.showChat) {
                 setDuplicateNickName(false)
                 setInChatRoom(true)
+                setNickName(data.data.nickName)
             } else {
                 setDuplicateNickName(true)
             }
@@ -47,7 +48,7 @@ function App() {
                     )
                     :
                     (
-                        <Chat socket={socket} nickName={nickName} color={color}/>
+                        <MyChat socket={socket} nickName={nickName} color={color}/>
                     )
                 }
             </header>

@@ -41,9 +41,9 @@ io.on("connection", (socket) => {
         }
         console.log("User", data.nickName,"has joined");
         if (users.has(data.nickName)) {
-            socket.emit("uniqueNickName", false)
+            socket.emit("uniqueNickName", {showChat: false})
         } else {
-            socket.emit("uniqueNickName", true)
+            socket.emit("uniqueNickName", {showChat: true, data})
             connections[socket.id] = data.nickName;
             users.add(data.nickName)
             socket.emit("updateChat", chatMessages)

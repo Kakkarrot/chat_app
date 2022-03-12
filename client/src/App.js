@@ -35,8 +35,8 @@ function App() {
                             <h3>Chat Chat</h3>
                             <h4>For Chatty People</h4>
                             <p>Enter Your Nickname!</p>
-                            < input type="text" placeholder="Enter a nickname"
-                                    onChange={(event) => setNickName(event.target.value)}/>
+                            <input type="text" placeholder="Enter a nickname"
+                                   onChange={(event) => setNickName(event.target.value)}/>
                             <p>Choose your Color!</p>
                             <HexColorPicker className="colorPicker" color={color} onChange={(event) => {
                                 setColor(event)

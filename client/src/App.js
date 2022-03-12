@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useMemo} from "react";
 import './App.css';
 import io from 'socket.io-client';
 import MyChat from "./MyChat";
@@ -15,7 +15,10 @@ function App() {
 
     async function joinChat() {
         socket.emit("join", {nickName, color})
-        await socket.on("uniqueNickName", (data) => {
+    }
+
+    useEffect(() => {
+        socket.on("uniqueNickName", (data) => {
             if (data.showChat) {
                 setDuplicateNickName(false)
                 setInChatRoom(true)
@@ -24,7 +27,7 @@ function App() {
                 setDuplicateNickName(true)
             }
         })
-    }
+    }, [socket])
 
     return (
         <div className="App">
@@ -43,7 +46,7 @@ function App() {
                             }}/>
                             <p>Or Just Enter!</p>
                             <button onClick={() => joinChat()}>Start Chatting!</button>
-                            {duplicateNickName ? <p className="duplicateNickName">Username already Exists!</p> : <></>}
+                            {duplicateNickName ? <p className="duplicateNickName">Nickname already Exists!</p> : <></>}
                         </div>
                     )
                     :

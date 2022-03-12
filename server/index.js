@@ -27,11 +27,18 @@ let connections = {};
 let users = new Set();
 let guestCounter = 1;
 
-function changeNickName(data) {
-
-}
-
 io.on("connection", (socket) => {
+    function changeNickName(data) {
+        if(users.has(data.message.substring(6))) {
+            socket.emit("uniqueNickName", {showChat: false})
+        } else {
+            data.nickName = data.message.substring(6)
+            socket.emit("uniqueNickName", {showChat: true, data})
+            connections[socket.id] = data.nickName;
+            users.add(data.nickName)
+        }
+    }
+
     console.log("User Connected:", socket.id);
     connections[socket.id] = "";
 
@@ -52,6 +59,10 @@ io.on("connection", (socket) => {
 
     socket.on("messageChat", (data) => {
         console.log("User", data.nickName, "sent:", data);
+        if (data.message.startsWith("/nick ")){
+            changeNickName(data)
+            return;
+        }
         data["time"] = new Date().toLocaleTimeString()
         chatMessages.push(data)
         if (chatMessages.length > 10) {

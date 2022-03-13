@@ -82,7 +82,11 @@ function App() {
                             <h4>For Chatty People</h4>
                             <p>Enter Your Nickname!</p>
                             <input type="text" placeholder="Enter a nickname"
-                                   onChange={(event) => setNickName(event.target.value)}/>
+                                   onChange={(event) => setNickName(event.target.value)}
+                                   onKeyPress={(event) => {
+                                       event.key === "Enter" && joinChat();
+                                   }}
+                            />
                             <p>Choose your Color!</p>
                             <HexColorPicker className="colorPicker" color={color} onChange={(event) => {
                                 setColor(event)

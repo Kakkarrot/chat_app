@@ -28,7 +28,7 @@ let users = new Set();
 let guestCounter = 1;
 
 io.on("connection", (socket) => {
-    function changeNickname(data) {
+    function handleChangeNickname(data) {
         if(users.has(data.message.substring(6))) {
             socket.emit("changeNickname", {validNickname: false})
             return;
@@ -43,7 +43,7 @@ io.on("connection", (socket) => {
         socket.emit("updateUsers", connections)
     }
 
-    function changeColor(data) {
+    function handleChangeColor(data) {
         let validColor = /^#[0-9A-F]{6}$/i;
         if (validColor.test(data.message.substring(11))) {
             data.color = data.message.substring(11)
@@ -57,56 +57,69 @@ io.on("connection", (socket) => {
         socket.emit("updateUsers", connections)
     }
 
-    socket.on("getUsers", () => {
-        socket.emit("updateUsers", connections)
-    })
+    function handleGetUsers() {
+        socket.on("getUsers", () => {
+            socket.emit("updateUsers", connections)
+        })
+    }
 
-    socket.on("join", (data) => {
-        if (data.nickName === "") {
-            data.nickName = "Guest_" + guestCounter++;
-        }
-        if (users.has(data.nickName)) {
-            socket.emit("uniqueNickname", {showChat: false})
-            return;
-        } else {
-            socket.emit("uniqueNickname", {showChat: true, data})
-            connections[socket.id] = {nickName: data.nickName, color: data.color};
-            users.add(data.nickName)
+    function handleNewUser() {
+        socket.on("join", (data) => {
+            if (data.nickName === "") {
+                data.nickName = "Guest_" + guestCounter++;
+            }
+            if (users.has(data.nickName)) {
+                socket.emit("uniqueNickname", {showChat: false})
+                return;
+            } else {
+                socket.emit("uniqueNickname", {showChat: true, data})
+                connections[socket.id] = {nickName: data.nickName, color: data.color};
+                users.add(data.nickName)
+                socket.emit("updateChat", chatMessages)
+            }
+            socket.broadcast.emit("updateUsers", connections)
+            socket.emit("updateUsers", connections)
+        })
+    }
+
+    function handleNewMessage() {
+        socket.on("messageChat", (data) => {
+            if (data.message.toLowerCase().startsWith("/nick ")) {
+                handleChangeNickname(data)
+                return;
+            }
+            if (data.message.toLowerCase().startsWith("/nickcolor ")) {
+                handleChangeColor(data)
+                return;
+            }
+            data["time"] = new Date().toLocaleTimeString()
+            data["time"] = new Date().toLocaleTimeString()
+            chatMessages.push(data)
+            if (chatMessages.length > 200) {
+                chatMessages.shift()
+            }
+            socket.broadcast.emit("updateChat", chatMessages)
             socket.emit("updateChat", chatMessages)
-        }
-        socket.broadcast.emit("updateUsers", connections)
-        socket.emit("updateUsers", connections)
-    })
+        })
+    }
 
-    socket.on("messageChat", (data) => {
-        if (data.message.toLowerCase().startsWith("/nick ")){
-            changeNickname(data)
-            return;
-        }
-        if (data.message.toLowerCase().startsWith("/nickcolor ")) {
-            changeColor(data)
-            return;
-        }
-        data["time"] = new Date().toLocaleTimeString()
-        data["time"] = new Date().toLocaleTimeString()
-        chatMessages.push(data)
-        if (chatMessages.length > 200) {
-            chatMessages.shift()
-        }
-        socket.broadcast.emit("updateChat", chatMessages)
-        socket.emit("updateChat", chatMessages)
-    })
+    function handleDisconnect() {
+        socket.on("disconnect", () => {
+            if (!connections[socket.id]) {
+                return;
+            }
+            let nickName = connections[socket.id].nickName
+            delete connections[socket.id];
+            users.delete(nickName)
+            socket.broadcast.emit("updateUsers", connections)
+            socket.emit("updateUsers", connections)
+        });
+    }
 
-    socket.on("disconnect", () => {
-        if (!connections[socket.id]){
-            return;
-        }
-        let nickName = connections[socket.id].nickName
-        delete connections[socket.id];
-        users.delete(nickName)
-        socket.broadcast.emit("updateUsers", connections)
-        socket.emit("updateUsers", connections)
-    });
+    handleNewUser();
+    handleGetUsers();
+    handleNewMessage();
+    handleDisconnect();
 });
 
 server.listen(PORT, () => {

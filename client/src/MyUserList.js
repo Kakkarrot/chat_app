@@ -13,32 +13,22 @@ function MyUserList({socket}) {
     const [users, setUsers] = React.useState([])
 
     useEffect(() => {
+        socket.emit("getUsers")
         socket.on("updateUsers", (data) => {
-            console.log(data)
             setUsers(data)
         })
     }, [socket])
 
     return (
         <>
-            <div className="chat-header">
+            <div className="chatHeader">
                 <p>Current Users</p>
             </div>
             <TableVirtuoso
-                style={{ height: 500 }}
-                data={[{name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test", description: "test"},
-                    {name: "test2", description: "test2"}]}
+                style={{ height: 500, backgroundColor: "lightgrey"}}
+                data={Object.entries(users).map((value) => {
+                    return {name: value[1].nickName, color: value[1].color}
+                })}
                 components={{
                     Scroller: React.forwardRef((props, ref) => <TableContainer component={Paper} {...props} ref={ref} />),
                     Table: (props) => <Table {...props} style={{ borderCollapse: 'separate' }} />,
@@ -48,21 +38,21 @@ function MyUserList({socket}) {
                 }}
                 fixedHeaderContent={() => (
                     <TableRow>
-                        <TableCell style={{ width: 150, background: 'white' }}>
-                            Name
+                        <TableCell style={{ width: 400, background: 'lightgrey', textAlign: "center", fontWeight: "bold", borderWidth: "0.5rem"}}>
+                            Nickname
                         </TableCell>
-                        <TableCell style={{ background: 'white' }}>
-                            Description
+                        <TableCell style={{ width: 150, background: 'lightgrey', textAlign: "center", fontWeight: "bold", borderWidth: "0.5rem"}}>
+                            Color
                         </TableCell>
                     </TableRow>
                 )}
                 itemContent={(index, user) => (
                     <>
-                        <TableCell style={{ width: 150, background: 'white' }}>
+                        <TableCell style={{ width: 400, background: 'lightgrey', textAlign: "center", borderWidth: "0.2rem"}}>
                             {user.name}
                         </TableCell>
-                        <TableCell style={{ background: 'white'  }}>
-                            {user.description}
+                        <TableCell style={{ background: user.color, textAlign: "center", borderWidth: "0.2rem"}}>
+                            {user.color}
                         </TableCell>
                     </>
                 )}

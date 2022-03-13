@@ -9,7 +9,7 @@ function MyChat({socket, nickName, color}) {
     const [chatMessages, setChatMessages] = React.useState([])
     const [showUserList, setShowUserList] = React.useState(false)
 
-    async function sendMessage() {
+    function sendMessage() {
         setMessage("")
         if (message.length !== 0) {
             const messageJson = {
@@ -37,7 +37,7 @@ function MyChat({socket, nickName, color}) {
 
             <div className="chatWindow">
                 <button className="toggleView"
-                    onClick={() => setShowUserList(!showUserList)}>{showUserList ? "Show Chat" : "Show Users"}</button>
+                        onClick={() => setShowUserList(!showUserList)}>{showUserList ? "Show Chat" : "Show Users"}</button>
                 {showUserList
                     ?
                     (
@@ -48,11 +48,11 @@ function MyChat({socket, nickName, color}) {
                     :
                     (
                         <>
-                            <div className="chat-header">
+                            <div className="chatHeader">
                                 <p>Chat Chat</p>
                             </div>
-                            <div className="chat-body">
-                                <ScrollToBottom className="message-container">
+                            <div className="chatBody">
+                                <ScrollToBottom className="messageContainer">
                                     {
                                         chatMessages.map((messageContent) => {
                                             return (
@@ -61,13 +61,23 @@ function MyChat({socket, nickName, color}) {
                                                     id={socket.id === messageContent.socket ? "you" : "other"}
                                                 >
                                                     <div>
-                                                        <div className="message-content"
+                                                        <div className="messageContent"
                                                              style={{backgroundColor: messageContent.color}}>
                                                             <p style={{color: invertColor(messageContent.color)}}>{messageContent.message}</p>
                                                         </div>
-                                                        <div className="message-meta">
-                                                            <p id="time">{messageContent.time}</p>
-                                                            <p id="author">{messageContent.nickName}</p>
+                                                        <div className="messageMeta">
+                                                            {
+                                                                socket.id === messageContent.socket ?
+                                                                    <>
+                                                                        <p id="time">{messageContent.time}</p>
+                                                                        <p id="author">{messageContent.nickName}</p>
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <p id="time">{messageContent.nickName}</p>
+                                                                        <p id="author">{messageContent.time}</p>
+                                                                    </>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
@@ -75,7 +85,7 @@ function MyChat({socket, nickName, color}) {
                                         })}
                                 </ScrollToBottom>
                             </div>
-                            <div className="chat-footer">
+                            <div className="chatFooter">
                                 <input
                                     type="text"
                                     value={message}

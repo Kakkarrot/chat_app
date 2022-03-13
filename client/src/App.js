@@ -29,6 +29,7 @@ function App() {
             }
         });
         socket.on("changeNickname", (data) => {
+            setInvalidColor(false)
             if (data.validNickname) {
                 setDuplicateNickName(false)
                 setNickName(data.data.nickName)
@@ -37,7 +38,7 @@ function App() {
             }
         })
         socket.on("changeColor", (data) => {
-            console.log(data)
+            setDuplicateNickName(false)
             if(data.validColor) {
                 setInvalidColor(false)
                 setColor(data.data.color)
@@ -77,8 +78,8 @@ function App() {
                         <MyChat socket={socket} nickName={nickName} color={color}/>
                     )
                 }
-                {duplicateNickName ? <p className="duplicateNickName">Nickname already exists!</p> : <></>}
-                {invalidColor ? <p className="invalidColor">Color not valid! Try #RRGGBB format!</p> : <></>}
+                {duplicateNickName ? <p className="errorMessage">Nickname already exists!</p> : <></>}
+                {invalidColor ? <p className="errorMessage">Color not valid! Try #RRGGBB format!</p> : <></>}
             </header>
         </div>
     );

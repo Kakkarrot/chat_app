@@ -31,14 +31,16 @@ io.on("connection", (socket) => {
     function changeNickname(data) {
         if(users.has(data.message.substring(6))) {
             socket.emit("changeNickname", {validNickname: false})
+            return;
         } else {
             users.delete(data.nickName)
             data.nickName = data.message.substring(6)
             socket.emit("changeNickname", {validNickname: true, data})
             connections[socket.id] = {nickName: data.nickName, color: data.color};
             users.add(data.nickName)
-            socket.emit("updateUsers", users)
         }
+        socket.broadcast.emit("updateUsers", connections)
+        socket.emit("updateUsers", connections)
     }
 
     function changeColor(data) {
@@ -48,8 +50,15 @@ io.on("connection", (socket) => {
             socket.emit("changeColor", {validColor: true, data})
         } else {
             socket.emit("changeColor", {validColor: false})
+            return;
         }
+        socket.broadcast.emit("updateUsers", connections)
+        socket.emit("updateUsers", connections)
     }
+
+    socket.on("getUsers", () => {
+        socket.emit("updateUsers", connections)
+    })
 
     socket.on("join", (data) => {
         if (data.nickName === "") {
@@ -57,12 +66,15 @@ io.on("connection", (socket) => {
         }
         if (users.has(data.nickName)) {
             socket.emit("uniqueNickname", {showChat: false})
+            return;
         } else {
             socket.emit("uniqueNickname", {showChat: true, data})
             connections[socket.id] = {nickName: data.nickName, color: data.color};
             users.add(data.nickName)
             socket.emit("updateChat", chatMessages)
         }
+        socket.broadcast.emit("updateUsers", connections)
+        socket.emit("updateUsers", connections)
     })
 
     socket.on("messageChat", (data) => {
@@ -77,7 +89,7 @@ io.on("connection", (socket) => {
         data["time"] = new Date().toLocaleTimeString()
         data["time"] = new Date().toLocaleTimeString()
         chatMessages.push(data)
-        if (chatMessages.length > 10) {
+        if (chatMessages.length > 200) {
             chatMessages.shift()
         }
         socket.broadcast.emit("updateChat", chatMessages)
@@ -86,11 +98,13 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         if (!connections[socket.id]){
-            return
+            return;
         }
         let nickName = connections[socket.id].nickName
         delete connections[socket.id];
         users.delete(nickName)
+        socket.broadcast.emit("updateUsers", connections)
+        socket.emit("updateUsers", connections)
     });
 });
 

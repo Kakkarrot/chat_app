@@ -8,15 +8,19 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 
-
+//Responsible for the user list functionality
 function MyUserList({socket}) {
     const [users, setUsers] = React.useState([])
 
-    useEffect(() => {
+    function handleUsers() {
         socket.emit("getUsers")
         socket.on("updateUsers", (data) => {
             setUsers(data)
         })
+    }
+
+    useEffect(() => {
+        handleUsers();
     }, [socket])
 
     return (

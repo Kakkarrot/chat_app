@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import ScrollToBottom from "react-scroll-to-bottom";
 import MyUserList from "./MyUserList";
 
-
+//Responsible for the chat functionality
 function MyChat({socket, nickName, color}) {
     const [message, setMessage] = React.useState("")
     const [chatMessages, setChatMessages] = React.useState([])
@@ -22,12 +22,17 @@ function MyChat({socket, nickName, color}) {
         }
     }
 
-    useEffect(() => {
+    function handleChatMessages() {
         socket.on("updateChat", (data) => {
             setChatMessages(data)
         })
+    }
+
+    useEffect(() => {
+        handleChatMessages();
     }, [socket])
 
+    //Ensures that the message is always visible regardless of the color a user picks
     function invertColor(hex) {
         return "#" + (Number(`0x1${hex.substring(1)}`) ^ 0xFFFFFF).toString(16).substr(1).toUpperCase()
     }

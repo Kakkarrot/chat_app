@@ -5,6 +5,7 @@ import MyChat from "./MyChat";
 import {HexColorPicker} from "react-colorful";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+//Server address
 const socket = io.connect("http://localhost:3001")
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
         socket.emit("join", {nickName, color})
     }
 
-    useEffect(() => {
+    function handleNickname() {
         socket.on("uniqueNickname", (data) => {
             if (data.showChat) {
                 setDuplicateNickName(false)
@@ -28,6 +29,9 @@ function App() {
                 setDuplicateNickName(true)
             }
         });
+    }
+
+    function handleChangeNickname() {
         socket.on("changeNickname", (data) => {
             setInvalidColor(false)
             if (data.validNickname) {
@@ -37,21 +41,35 @@ function App() {
                 setDuplicateNickName(true)
             }
         })
+    }
+
+    function handleChangeColor() {
         socket.on("changeColor", (data) => {
             setDuplicateNickName(false)
-            if(data.validColor) {
+            if (data.validColor) {
                 setInvalidColor(false)
                 setColor(data.data.color)
             } else {
                 setInvalidColor(true)
             }
         })
+    }
+
+    function handleChatMessaging() {
         socket.on("updateChat", (data) => {
-            if (data[data.length - 1].socket === socket.id){
+            if (data[data.length - 1].socket === socket.id) {
                 setDuplicateNickName(false)
                 setInvalidColor(false)
             }
         })
+    }
+
+    //These methods are all called upon any change in the socket
+    useEffect(() => {
+        handleNickname();
+        handleChangeNickname();
+        handleChangeColor();
+        handleChatMessaging();
     }, [socket])
 
     return (

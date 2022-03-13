@@ -47,6 +47,7 @@ io.on("connection", (socket) => {
         let validColor = /^#[0-9A-F]{6}$/i;
         if (validColor.test(data.message.substring(11))) {
             data.color = data.message.substring(11)
+            connections[socket.id].color = data.color
             socket.emit("changeColor", {validColor: true, data})
         } else {
             socket.emit("changeColor", {validColor: false})
